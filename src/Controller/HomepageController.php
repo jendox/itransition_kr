@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomepageController extends AbstractController
 {
     public function __construct(
-        private ReviewRepository $reviewRepository
+        private ReviewRepository $reviewRepository,
     ){}
 
     #[Route('/', name: 'app_homepage')]

@@ -1,0 +1,45 @@
+{% extends 'homepage/homepage.html.twig' %}
+
+{% block title %}Settings {{ app.user.email }}{% endblock %}
+
+{% block content %}
+    <h3>Settings</h3>
+    <form id="settingsForm" method="get" class="mx-3">
+        <div class="my-3">
+            <p class="my-3">Language</p>
+            <div class="list-group mx-3">
+                <label class="list-group-item d-flex gap-2">
+                    <input class="form-check-input flex-shrink-0" type="radio" name="listLanguages" id="listLanguages1" value="" checked="">
+                    <span>English (default)</span>
+                </label>
+                <label class="list-group-item d-flex gap-2">
+                    <input class="form-check-input flex-shrink-0" type="radio" name="listLanguages" id="listLanguages2" value="">
+                    <span>Russian</span>
+                </label>
+            </div>
+        </div>
+        <div class="my-3">
+            <p class="my-3">Theme</p>
+            <div class="list-group mx-3">
+                <label class="list-group-item d-flex gap-2">
+                    <input class="form-check-input flex-shrink-0" type="radio" name="listThemes" id="listThemes1" value="" checked="">
+                    <span>Light (default)</span>
+                </label>
+                <label class="list-group-item d-flex gap-2">
+                    <input class="form-check-input flex-shrink-0" type="radio" name="listThemes" id="listThemes2" value="">
+                    <span>Dark</span>
+                </label>
+            </div>
+        </div>
+
+        <input type="submit" class="btn btn-primary my-3 mx-3" value="Save">
+    </form>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

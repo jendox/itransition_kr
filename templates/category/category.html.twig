@@ -1,0 +1,46 @@
+{% extends 'homepage/homepage.html.twig' %}
+
+{% block title %}{{ categoryName|title }}{% endblock %}
+
+{% block content %}
+    <div class="container my-3 border-bottom" id="categoryReviews">
+        <h5 class="mb-3">{{ categoryName|title }} reviews</h5>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mb-3">
+            {% for review in categoryReviews %}
+                <div class="col my-3">
+                    <div class="card shadow-sm">
+                        <div class="form-control">
+                            <a href="{{ path('app_show_review', {id: review.id}) }}" class="link-dark">{{ review.title }}</a>
+                        </div>
+                        {% if review.images.count %}
+                            <img src="/images/{{ review.images[random(0,review.images.count-1)].name }}" width="100%" height="225">
+                        {% else %}
+                            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+                        {% endif %}
+                        <div class="card-body">
+                            <p class="card-text">
+                                {{ review.body | slice(0, 150) | markdown_to_html }}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <input value="{{ review.authorRating }}" class="rating-loading" data-show-caption="false" data-size="xs">
+                                </div>
+                                <small class="text-muted">{{ review.createdAt|date('Y-m-d') }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p class="form-control text-center">There no {{ categoryName }} reviews yet...</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
