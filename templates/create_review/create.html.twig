@@ -1,0 +1,63 @@
+{% extends 'homepage/homepage.html.twig' %}
+
+{% block title %}Create{% endblock %}
+
+{% block tags %}
+<script src="https://unpkg.com/@yaireo/tagify"></script>
+<script src="https://unpkg.com/@yaireo/tagify@3.1.0/dist/tagify.polyfills.min.js"></script>
+<link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block content %}
+
+    {% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    <h2 class="h2 text-center">Create new review</h2>
+    {{ form_start(createreviewForm) }}
+        {{ form_row(createreviewForm.title) }}
+        {{ form_row(createreviewForm.body) }}
+        <div class="input-group">
+            {{ form_row(createreviewForm.category) }}
+            {{ form_row(createreviewForm.authorRating) }}
+        </div>
+
+        <label class="form-label mt-3">Upload images (Allowed maximum size is 2 MiB)</label>
+        <div id="upload-group">
+            {{ form_row(createreviewForm.images) }}
+            <div class="text-danger mt-2" id="error-message" style="display: none">
+                The files are too large.
+            </div>
+        </div>
+        <div class="">
+            {{ form_row(createreviewForm.tags) }}
+        </div>
+        <input type="submit" class="btn btn-primary mt-3" value="Post review">
+    {{ form_end(createreviewForm) }}
+
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready(() => {
+            // The DOM element you wish to replace with Tagify
+            // var input = document.querySelector('input[name=create_review[tags]]');
+            var input = document.getElementById("create_review_tags");
+            // initialize Tagify on the above input node reference
+            new Tagify(input)
+        });
+
+        $(document).on('input', 'input:file', function (e) {
+            let fileNames = e.target.files;
+            $('#error-message').hide();
+            for (let i = 0; i < fileNames.length; i++) {
+                if (fileNames[i].size > 2097152) {
+                    $('#error-message').show();
+                }
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'homepage/homepage.html.twig' %}
+
+{% block title %}Edit{% endblock %}
+
+{% block tags %}
+    <script src="https://unpkg.com/@yaireo/tagify"></script>
+    <script src="https://unpkg.com/@yaireo/tagify@3.1.0/dist/tagify.polyfills.min.js"></script>
+    <link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block content %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <h2 class="h2 text-center">Edit review</h2>
+    {{ form_start(editreviewForm, {'attr': {'id': 'edit_review'}}) }}
+        {{ form_row(editreviewForm.title) }}
+        {{ form_row(editreviewForm.body) }}
+        <div class="input-group">
+            {{ form_row(editreviewForm.category) }}
+            {{ form_row(editreviewForm.authorRating) }}
+        </div>
+
+        {% if review.images.count > 0 %}
+            <p class="mt-3">Check image to remove</p>
+        {% endif %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3" id="image-container">
+            {% for image in review.images %}
+            <div class="col">
+                <div class="card">
+                    <input class="form-check-input ms-2" type="checkbox" name="checkbox_{{ image.id }}">
+                    <img class="mx-1 my-1" src="{{ imagesDirectory }}{{ image.name }}" width="210" height="150">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <label class="form-label mt-5">Upload images (*.jpg, *.jpeg, *.png, *.bmp, *.gif)</label>
+        <div class="" id="upload-group">
+            {{ form_row(editreviewForm.images) }}
+        </div>
+        <div class="">
+            {{ form_row(editreviewForm.tags) }}
+        </div>
+        <input type="submit" class="btn btn-primary mt-3" value="SAVE">
+    {{ form_end(editreviewForm) }}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready(() => {
+            var input = document.getElementById("create_review_tags");
+            new Tagify(input)
+        });
+    </script>
+{% endblock %}
