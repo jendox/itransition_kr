@@ -83,6 +83,12 @@
     "laminas/laminas-code": {
         "version": "4.5.1"
     },
+    "league/flysystem": {
+        "version": "3.0.12"
+    },
+    "league/mime-type-detection": {
+        "version": "1.9.0"
+    },
     "monolog/monolog": {
         "version": "2.4.0"
     },
@@ -91,6 +97,18 @@
     },
     "nikic/php-parser": {
         "version": "v4.13.2"
+    },
+    "oneup/flysystem-bundle": {
+        "version": "4.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "4.0",
+            "ref": "3ae1b83985e89138f5443bbc2d9b8c074b497d49"
+        },
+        "files": [
+            "config/packages/oneup_flysystem.yaml"
+        ]
     },
     "phar-io/manifest": {
         "version": "2.0.3"
