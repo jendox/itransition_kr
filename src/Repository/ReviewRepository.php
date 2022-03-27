@@ -61,7 +61,7 @@ class ReviewRepository extends ServiceEntityRepository
     /**
      * @return Review[]
      */
-    public function getAll()
+    public function getAll(): array
     {
         $query = $this->_em->createQuery(
             'SELECT r,c FROM App\Entity\Review r JOIN r.category c ORDER BY r.id ASC'
@@ -72,7 +72,7 @@ class ReviewRepository extends ServiceEntityRepository
     /**
      * @return Review[]
      */
-    public function getUserReviews(int $author)
+    public function getUserReviews(int $author): array
     {
         $query = $this->_em->createQuery(
             'SELECT r,c FROM App\Entity\Review r 
@@ -98,8 +98,8 @@ class ReviewRepository extends ServiceEntityRepository
                  LEFT JOIN r.usersRating ur
                  ORDER BY r.createdAt DESC'
         );
-        $query->setMaxResults(self::MAX_REVIEWS_ITEMS*2);
-        return $query->getResult();
+//        $query->setMaxResults(self::MAX_REVIEWS_ITEMS);
+        return $query->getResult(AbstractQuery::HYDRATE_OBJECT);
     }
 
     // /**
