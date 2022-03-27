@@ -16,9 +16,10 @@ class HomepageController extends AbstractController
     #[Route('/', name: 'app_homepage')]
     public function index(): Response
     {
-        $latestReviews = $this->reviewRepository->getRecentlyAdded();
-        return $this->render('homepage/homepage.html.twig', [
-            'latestReviews' => $latestReviews,
-        ]);
+        return $this->render('base.html.twig');
+//        $latestReviews = $this->reviewRepository->getRecentlyAdded();
+//        return $this->render('homepage/homepage.html.twig', [
+//            'latestReviews' => $latestReviews,
+//        ]);
     }
 }
