@@ -4,7 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-#    images_directory: '/images/'
+    images_directory: '/images/'
 
 services:
     # default configuration for services in *this* file
@@ -23,8 +23,8 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-#    App\Service\FileUploader:
-#        arguments:
-#            $imagesDirectory: '%images_directory%'
-#        bind:
-#            $filesystem: '@oneup_flysystem.public_uploads_filesystem_filesystem'
+    App\Service\FileUploader:
+        arguments:
+            $imagesDirectory: '%images_directory%'
+        bind:
+            $filesystem: '@oneup_flysystem.public_uploads_filesystem_filesystem'

@@ -18,23 +18,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    private $email;
+    private string $email;
 
     #[ORM\Column(type: 'json')]
-    private $roles = [];
+    private array $roles = [];
 
     #[ORM\Column(type: 'string')]
-    private $password;
+    private string $password;
 
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Review::class)]
     private $reviews;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isActive;
+
     public function __construct()
     {
         $this->reviews = new ArrayCollection();
+        $this->isActive = true;
     }
 
     public function getId(): ?int
@@ -133,6 +137,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $review->setAuthor(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
 
         return $this;
     }

@@ -4,8 +4,12 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -14,6 +18,7 @@ class AdminController extends AbstractController
 {
     public function __construct(
         private UserRepository $userRepository,
+        private EntityManagerInterface $entityManager
     ) {}
 
     #[Route(
@@ -29,32 +34,34 @@ class AdminController extends AbstractController
     }
 
     #[Route(
-        '/block/{user}',
-        name: 'app_block_user',
+        '/change_state/{user}',
+        name: 'app_change_user_state',
         requirements: ['user' => '\d+'],
         methods: ['post']
     )]
-    public function blockUser(User $user): Response
+    public function change(User $user, Request $request): Response
     {
+        $state = true;
+        if ($request->get('action') == 'block') {
+            $state = false;
+        }
+        $user->setIsActive($state);
+        try {
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+        }
+        catch (Exception $e)
+        {
+            return $this->json(
+                [
+                    "status" => "error"
+                ]);
+        }
         return $this->json(
             [
-                "user" => $user->getEmail(),
-                "status" => "blocked"
-            ]);
-    }
-
-    #[Route(
-        '/unblock/{user}',
-        name: 'app_unblock_user',
-        requirements: ['user' => '\d+'],
-        methods: ['post']
-    )]
-    public function unblockUser(User $user): Response
-    {
-        return $this->json(
-            [
-                "user" => $user->getEmail(),
-                "status" => "active"
+                "status" => "ok",
+                "userId" => $user->getId(),
+                "userState" => $user->getIsActive()
             ]);
     }
 }

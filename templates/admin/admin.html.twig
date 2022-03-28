@@ -12,7 +12,7 @@
                     <th scope="col">Id</th>
                     <th scope="col">Email</th>
                     <th scope="col">Roles</th>
-                    <th scope="col">Status</th>
+                    <th scope="col">State</th>
                     <th scope="col"></th>
                 </tr>
                 </thead>
@@ -21,14 +21,13 @@
                     <th scope="col">Id</th>
                     <th scope="col">Email</th>
                     <th scope="col">Roles</th>
-                    <th scope="col">Status</th>
+                    <th scope="col">State</th>
                     <th scope="col"></th>
                 </tr>
                 </tfoot>
                 <tbody>
                 {% for user in users %}
-                    {% set status = true %}
-                    <tr>
+                    <tr id="user_info_{{ user.id }}">
                         <td>
                             {{ user.id }}
                         </td>
@@ -41,20 +40,19 @@
                             {% endfor %}
                         </td>
                         <td>
-                            {% if status %}Active{% else %}Blocked{% endif %}
+                            {% if user.isActive %}Active{% else %}Blocked{% endif %}
                         </td>
                         <td>
-                            {% if status %}
-                                <a href="#" class="link-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Block user">
-                                    <i class="bi bi-lock"></i>
+                            {% if user.isActive %}
+                                <a href="#" id="user_{{ user.id }}" class="userState link-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Block user">
+                                    <i class="bi bi-unlock"></i>
                                 </a>
                             {% else %}
-                                <a href="#" class="link-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Unblock user">
-                                    <i class="bi bi-unlock"></i>
+                                <a href="#" id="user_{{ user.id }}" class="userState link-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Unblock user">
+                                    <i class="bi bi-lock"></i>
                                 </a>
                             {% endif %}
                         </td>
-
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -79,6 +77,36 @@
             $('#users_table').DataTable({
                 // searching: false
                 dom: 'Plfrtip'
+            });
+
+            $('.userState').on('click', (e) => {
+                let url = "{{ path('app_change_user_state', {'user': 0}) }}";
+                let id = e.currentTarget.id.split('_')[1];
+                url = url.slice(0, -1) + id;
+                let userRow = document.getElementById('user_info_' + id);
+                let user_action = 'block';
+                if (userRow.children[3].innerHTML.trim() === 'Blocked') {
+                    user_action = 'unblock';
+                }
+                $.post(
+                    url,
+                    {action: user_action},
+                    function (data) {
+                        console.log(data);
+                        if (data['status'] === 'ok') {
+                            let id = data['userId'];
+                            let userRow = document.getElementById('user_info_' + id.toString());
+                            if (data['userState'] === true) {
+                                userRow.children[3].innerHTML = 'Active';
+                                userRow.children[4].children[0].innerHTML = `<i class="bi bi-unlock"></i>`;
+                                userRow.children[4].children[0].setAttribute('title', 'Block user');
+                            } else {
+                                userRow.children[3].innerHTML = 'Blocked';
+                                userRow.children[4].children[0].innerHTML = `<i class="bi bi-lock"></i>`;
+                                userRow.children[4].children[0].setAttribute('title', 'Unblock user');
+                            }
+                        }
+                });
             });
         } );
     </script>

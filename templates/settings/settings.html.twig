@@ -4,7 +4,7 @@
 
 {% block content %}
     <h3>Settings</h3>
-    <form id="settingsForm" method="get" class="mx-3">
+    <form id="settingsForm" method="get" enctype="multipart/form-data" class="mx-3">
         <div class="my-3">
             <p class="my-3">Language</p>
             <div class="list-group mx-3">
@@ -34,6 +34,9 @@
 
         <input type="submit" class="btn btn-primary my-3 mx-3" value="Save">
     </form>
+{#    <form id="changePassForm" method="post" enctype="multipart/form-data" class="mx-3">#}
+{#        #}
+{#    </form>#}
 {% endblock %}
 
 {% block stylesheets %}

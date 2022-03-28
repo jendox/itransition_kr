@@ -21,43 +21,42 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ReviewController extends AbstractController
 {
-//    private string $targetDirectory;
+    private string $targetDirectory;
 
     public function __construct(
-//        private ImageRepository $imageRepository,
+        private ImageRepository $imageRepository,
         private ReviewRepository $reviewRepository,
-        private TagRepository $tagRepository
-//        private FileUploader $fileUploader
-){
-//        $this->targetDirectory = $fileUploader->getTargetDirectory();
+        private TagRepository $tagRepository,
+        private FileUploader $fileUploader){
+        $this->targetDirectory = $fileUploader->getTargetDirectory();
     }
 
     /**
      * @throws \League\Flysystem\FilesystemException
      */
-//    private function add_images(User $user, Review $review, array $files) {
-//        $directory = $user->getEmail();
-//        foreach ($files as $file) {
-//            $image_name = $this->fileUploader->upload($file, $directory, null);
-//            $image = new Image();
-//            $image->setName($directory . '/' . $image_name);
-//            $image->setReview($review);
-//            $review->addImage($image);
-//        }
-//    }
+    private function add_images(User $user, Review $review, array $files) {
+        $directory = $user->getEmail();
+        foreach ($files as $file) {
+            $image_name = $this->fileUploader->upload($file, $directory, null);
+            $image = new Image();
+            $image->setName($directory . '/' . $image_name);
+            $image->setReview($review);
+            $review->addImage($image);
+        }
+    }
 
     /**
      * @throws \Doctrine\ORM\OptimisticLockException
      * @throws \Doctrine\ORM\ORMException
      * @throws \League\Flysystem\FilesystemException
      */
-//    private function remove_images(array $ids) {
-//        foreach ($ids as $id) {
-//                $image = $this->imageRepository->find($id);
-//                $this->fileUploader->remove($image->getName());
-//                $this->imageRepository->remove($image);
-//        }
-//    }
+    private function remove_images(array $ids) {
+        foreach ($ids as $id) {
+                $image = $this->imageRepository->find($id);
+                $this->fileUploader->remove($image->getName());
+                $this->imageRepository->remove($image);
+        }
+    }
 
     private function get_images_id(Request $request): array {
         $ids = [];
@@ -108,10 +107,10 @@ class ReviewController extends AbstractController
         {
             $review->setAuthor($user);
             // Add images
-//            $files = $form->get('images')->getData();
-//            if (count($files)) {
-//                $this->add_images($user, $review, $files);
-//            }
+            $files = $form->get('images')->getData();
+            if (count($files)) {
+                $this->add_images($user, $review, $files);
+            }
             // Add tags
             $tags_list = $form->get('tags')->getData();
             if ($tags_list) {
@@ -151,21 +150,25 @@ class ReviewController extends AbstractController
 
         /** @var User $user */
         $user = $this->getUser();
+        $author = $review->getAuthor();
+        if ($user->getId() != $author->getId() and !in_array('ROLE_ADMIN', $user->getRoles())) {
+            throw $this->createAccessDeniedException();
+        }
 
         $form = $this->createForm(CreateReviewType::class, $review);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-//            $ids = $this->get_images_id($request);
-//            if ($ids) {
-//                $this->remove_images($ids);
-//            }
+            $ids = $this->get_images_id($request);
+            if ($ids) {
+                $this->remove_images($ids);
+            }
 
-//            $files = $form->get('images')->getData();
-//            if (count($files)) {
-//                $this->add_images($user, $review, $files);
-//            }
+            $files = $form->get('images')->getData();
+            if (count($files)) {
+                $this->add_images($author, $review, $files);
+            }
             $tags_list = $form->get('tags')->getData();
             if ($tags_list) {
                 $this->add_tags($review, $tags_list);
@@ -181,7 +184,7 @@ class ReviewController extends AbstractController
         return $this->render('edit_review/edit.html.twig', [
             'editreviewForm' => $form->createView(),
             'review' => $review,
-//            'imagesDirectory' => $this->targetDirectory,
+            'imagesDirectory' => $this->targetDirectory,
         ]);
     }
 
@@ -199,14 +202,20 @@ class ReviewController extends AbstractController
     public function delete(
         Review $review): Response {
 
-//        $images = $review->getImages();
-//        $ids = [];
-//        foreach ($images as $image) {
-//            $ids[] = $image->getId();
-//        }
-//        if ($ids) {
-//            $this->remove_images($ids);
-//        }
+        /** @var User $user */
+        $user = $this->getUser();
+        $author = $review->getAuthor();
+        if ($user->getId() != $author->getId() and !in_array('ROLE_ADMIN', $user->getRoles())) {
+            throw $this->createAccessDeniedException();
+        }
+        $images = $review->getImages();
+        $ids = [];
+        foreach ($images as $image) {
+            $ids[] = $image->getId();
+        }
+        if ($ids) {
+            $this->remove_images($ids);
+        }
         $this->reviewRepository->remove($review);
         return $this->redirectToRoute('app_profile', ['user' => $this->getUser()->getId()]);
     }
@@ -219,12 +228,12 @@ class ReviewController extends AbstractController
     )]
     public function show(Review $review, FileUploader $fileUploader): Response
     {
-//        $this->targetDirectory = $fileUploader->getTargetDirectory();
+        $this->targetDirectory = $fileUploader->getTargetDirectory();
 
         return $this->render('show_review/show.html.twig', [
             'controller_name' => 'ShowReviewController',
             'review' => $review,
-//            'imagesDirectory' => $this->targetDirectory,
+            'imagesDirectory' => $this->targetDirectory,
         ]);
     }
 

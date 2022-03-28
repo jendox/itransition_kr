@@ -113,7 +113,8 @@ class CreateReviewType extends AbstractType
                 'attr' => [
                     'min' => '1',
                     'max' => '5',
-                    'step' => '1'
+                    'step' => '1',
+//                    'value' => '1',
                     ]
             ])
             ->add('category', null, [

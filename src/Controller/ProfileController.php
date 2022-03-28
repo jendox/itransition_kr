@@ -25,6 +25,9 @@ class ProfileController extends AbstractController
     )]
     public function profile(User $user): Response
     {
+        if ($user->getId() != $this->getUser()->getId() and !in_array('ROLE_ADMIN', $user->getRoles())) {
+            throw $this->createAccessDeniedException();
+        }
         $reviews = $this->reviewRepository->getUserReviews($user->getId());
 
         return $this->render('profile/profile.html.twig', [
